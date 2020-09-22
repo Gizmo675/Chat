@@ -6,11 +6,23 @@ class Channels extends React.Component {
   
   state = {
     user: this.props.currentUser,
-    Channels: [],
+    channels: [],
     channelName: '',
     channelDetails: '',
     modal: false,
     channelsRef: firebase.database().ref('channels')
+  }
+
+  componentDidMount() {
+    this.addListeners()
+  }
+
+  addListeners = () => {
+    let loadedChannels = []
+    this.state.channelsRef.on('child_added', snap => {
+      loadedChannels.push(snap.val())
+      this.setState({ channels: loadedChannels })
+    })
   }
 
   handleSubmit = event => {
@@ -45,6 +57,20 @@ class Channels extends React.Component {
     })
   }
 
+  displayChannels = channels => (
+    channels.length > 0 && channels.map(channel => (
+      <Menu.Item
+      key={channel.id}
+      name={channel.name}
+      onClick={()=> console.log(channel)}
+      style={{ opacity: 0.7 }}
+      >
+        # {channel.name}
+      </Menu.Item>
+    ))
+  )
+  
+
   isFormValid = ({ channelName, channelDetails }) => channelName && channelDetails
 
   closeModal = () => {
@@ -60,7 +86,7 @@ class Channels extends React.Component {
 
   render() {
     
-    const {Channels, modal} = this.state
+    const {channels, modal} = this.state
 
     return ( 
       <>
@@ -69,9 +95,9 @@ class Channels extends React.Component {
           <span>
             <Icon name="exchange" /> CHAINES
           </span>{' '}
-          ({Channels.length}) <Icon name='add' onClick={this.openModal} />
+          ({channels.length}) <Icon name='add' onClick={this.openModal} />
         </Menu.Item>
-        {/* Channels */}
+        {this.displayChannels(channels)}
       </Menu.Menu>
 
       {/* Ajouter une chaine */}
