@@ -10,7 +10,43 @@ class Register extends React.Component {
     username: '',
     email: '',
     password: '',
-    passwordConfirmation: ''
+    passwordConfirmation: '',
+    error: []
+  }
+
+  isFormValid = () => {
+    let errors = []
+    let error
+
+    if (this.isFormEmpty(this.state)) {
+      error = {message : 'Merci de remplir chaque champ'}
+      this.setState({ errors: errors.concat(error) })
+      return false
+    } else if (!this.isPasswordValid(this.state)) {
+      error = { message: 'Le mot de passe est invalide' }
+      this.setState({ errors: errors.concat(error) })
+      return false
+    } else {
+      // le formulaire est valide
+      return true;
+    }
+  }
+
+  isFormEmpty = ({username, email, password, passwordConfirmation}) => {
+    return !username.length || !email.length || !password.length || !passwordConfirmation.length;
+  }
+
+  isPasswordValid = ({ password, passwordConfirmation }) => {
+    // On verifie que le mot passe fasse 6 caracteres
+    if(password.length < 6 || passwordConfirmation.length < 6) {
+      return false;
+    // On verifie que le mot de passe soit identique a la confirmation
+    } else if (password !== passwordConfirmation){
+      return false;
+      // Le formulaire est valide
+    } else {
+      return true
+    }
   }
 
   handleChange = event => {
@@ -20,14 +56,16 @@ class Register extends React.Component {
   }
 
   handleSubmit = event => {
-    event.preventDefault()
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(this.state.email, this.state.password)
-      .then(createdUser => {
-        console.log(createdUser)
-      })
-      .catch(err => console.error(err))
+    if (this.isFormValid()){
+      event.preventDefault()
+      firebase
+        .auth()
+        .createUserWithEmailAndPassword(this.state.email, this.state.password)
+        .then(createdUser => {
+          console.log(createdUser)
+        })
+        .catch(err => console.error(err))
+    }
   } 
 
   render() {
