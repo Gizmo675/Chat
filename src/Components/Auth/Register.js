@@ -11,7 +11,8 @@ class Register extends React.Component {
     email: '',
     password: '',
     passwordConfirmation: '',
-    errors: []
+    errors: [], 
+    loading: false
   }
 
   isFormValid = () => {
@@ -58,21 +59,29 @@ class Register extends React.Component {
   }
 
   handleSubmit = event => {
+    event.preventDefault()
     if (this.isFormValid()){
-      event.preventDefault()
+      this.setState({ errors: [], loading: true })
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
           console.log(createdUser)
+          this.setState({ loading: false })
         })
-        .catch(err => console.error(err))
-    }
-  } 
+        .catch(err => {
+          console.error(err)
+          this.setState({ errors: this.state.errors.concat(err), loading: false })
+        })
+  }}
+
+  handleInputError = (errors, inputName) => {
+    return errors.some(error => error.message.toLowerCase().includes(inputName)) ? 'error' : ''
+  }
 
   render() {
 
-    const {username, email, password, passwordConfirmation, errors} = this.state
+    const {username, email, password, passwordConfirmation, errors, loading} = this.state
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -101,6 +110,7 @@ class Register extends React.Component {
                 onChange={this.handleChange} 
                 type="email"
                 value={email}
+                className={this.handleInputError(errors, 'email')}
               />
               <Form.Input
                 fluid
@@ -111,6 +121,7 @@ class Register extends React.Component {
                 onChange={this.handleChange}
                 type="password"
                 value={password}
+                className={this.handleInputError(errors, 'password')}
                />
               <Form.Input
                 fluid
@@ -121,8 +132,15 @@ class Register extends React.Component {
                 onChange={this.handleChange}
                 type="password"
                 value={passwordConfirmation}
+                className={this.handleInputError(errors, 'password')}
                />
-              <Button color="pink" fluid size="large">
+              <Button
+                disabled={loading}
+                className={loading ? 'loading' : ''}
+                color="pink"
+                fluid
+                size="large"
+              >
                 Envoyer
               </Button>
             </Segment>
