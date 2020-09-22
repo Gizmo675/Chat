@@ -11,7 +11,7 @@ class Register extends React.Component {
     email: '',
     password: '',
     passwordConfirmation: '',
-    error: []
+    errors: []
   }
 
   isFormValid = () => {
@@ -49,6 +49,8 @@ class Register extends React.Component {
     }
   }
 
+  displayErrors = errors => errors.map((error, i) => <p key={i}>{error.message}</p>);
+
   handleChange = event => {
     this.setState({
       [event.target.name]: event.target.value
@@ -70,7 +72,7 @@ class Register extends React.Component {
 
   render() {
 
-    const {username, email, password, passwordConfirmation} = this.state
+    const {username, email, password, passwordConfirmation, errors} = this.state
 
     return (
       <Grid textAlign="center" verticalAlign="middle" className="app">
@@ -123,11 +125,17 @@ class Register extends React.Component {
               <Button color="pink" fluid size="large">
                 Envoyer
               </Button>
-              <Message>
-                Deja utilisateur ? <Link to="/login">Login</Link>
-              </Message>
             </Segment>
           </Form>
+          {errors.length>0 && (
+            <Message error>
+              <h3>Erreur</h3>
+              {this.displayErrors(errors)}
+            </Message>
+          )}
+          <Message>
+            Deja utilisateur ? <Link to="/login">Login</Link>
+          </Message>
         </Grid.Column>
       </Grid>
     )
