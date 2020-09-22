@@ -12,7 +12,7 @@ import Register from './Components/Auth/Register'
 import Spinner from './Spinner'
 
 import rootReducer from './reducers'
-import { setUser } from './actions/index'
+import { setUser, clearUser } from './actions/index'
 
 import { createStore } from 'redux'
 import { Provider, connect } from 'react-redux'
@@ -27,6 +27,9 @@ class Root extends React.Component {
         if(user) {
           this.props.setUser(user)
           this.props.history.push('/')
+        } else {
+          this.props.history.push('/login')
+          this.props.clearUser()
         }
       })
     }
@@ -49,7 +52,7 @@ const mapStateFromProps = state => ({
 const RootWithAuth = withRouter(
   connect(
     mapStateFromProps,
-    { setUser }
+    { setUser, clearUser }
   )(Root))
 
 ReactDOM.render(
