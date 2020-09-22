@@ -8,9 +8,12 @@ class Login extends React.Component {
 
   state = {
     email: '',
+    password: '',
     errors: [], 
     loading: false,
   }
+
+  isFormValid = ({ email, password }) => email && password
 
   // On affiche les erreurs dans un paragraphe en bouclant sur le tableau d'erreur
   displayErrors = errors => errors.map((error, i) => <p key={i}>{error.message}</p>);
@@ -21,13 +24,29 @@ class Login extends React.Component {
     })
   }
 
+  
   handleSubmit = event => {
     // On empeche la page de recharger
     event.preventDefault()
-    if (this.isFormValid()){
+    if (this.isFormValid(this.state)){
       // si le formulaire est valide on efface les erreurs et on passe en chargement
       this.setState({ errors: [], loading: true })
-  }}
+      firebase
+      .auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(signedInUser => {
+        console.log(signedInUser)
+      })
+      .catch(err => {
+        console.error(err)
+        this.setState({
+          errors: this.state.errors.concat(err),
+          loading: false
+        })
+      })
+    }}
+    
+
 
   handleInputError = (errors, inputName) => {
     // On change visuellement le champ qui contient un erreur en ajoutant la classe erreur
@@ -50,7 +69,8 @@ class Login extends React.Component {
             <Segment stacked>
 
               <Form.Input
-                fluid name="email" 
+                fluid 
+                name="email" 
                 icon="mail" 
                 iconPosition="left" 
                 placeholder="Adresse mail" 
