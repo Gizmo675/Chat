@@ -9,6 +9,7 @@ import 'semantic-ui-css/semantic.min.css'
 import App from './Components/App';
 import Login from './Components/Auth/Login'
 import Register from './Components/Auth/Register'
+import Spinner from './Spinner'
 
 import rootReducer from './reducers'
 import { setUser } from './actions/index'
@@ -31,7 +32,7 @@ class Root extends React.Component {
     }
 
   render() {
-    return (
+    return this.props.isLoading ? <Spinner /> : (
       <Switch>
         <Route path='/' exact component={App} />
         <Route path='/login' component={Login} />
@@ -41,7 +42,15 @@ class Root extends React.Component {
   }
 }
 
-const RootWithAuth = withRouter(connect(null, { setUser })(Root))
+const mapStateFromProps = state => ({
+  isLoading: state.user.isLoading
+})
+
+const RootWithAuth = withRouter(
+  connect(
+    mapStateFromProps,
+    { setUser }
+  )(Root))
 
 ReactDOM.render(
   <Provider store={store}>
