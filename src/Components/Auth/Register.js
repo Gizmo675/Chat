@@ -17,15 +17,19 @@ class Register extends React.Component {
     usersRef: firebase.database().ref('users')
   }
 
+  // On verifie que le formulaire soit valide
   isFormValid = () => {
     let errors = []
     let error
-
+    // Si le formulaire est vide
     if (this.isFormEmpty(this.state)) {
+      // On affiche un message d'erreur
       error = {message : 'Merci de remplir chaque champ'}
       this.setState({ errors: errors.concat(error) })
       return false
+      // Si le mot de passe est invalide
     } else if (!this.isPasswordValid(this.state)) {
+      // On affiche un message d'erreur
       error = { message: 'Le mot de passe est invalide' }
       this.setState({ errors: errors.concat(error) })
       return false
@@ -52,6 +56,7 @@ class Register extends React.Component {
     }
   }
 
+  // On affiche les erreurs dans un paragraphe en bouclant sur le tableau d'erreur
   displayErrors = errors => errors.map((error, i) => <p key={i}>{error.message}</p>);
 
   handleChange = event => {
@@ -61,20 +66,26 @@ class Register extends React.Component {
   }
 
   handleSubmit = event => {
+    // On empeche la page de recharger
     event.preventDefault()
     if (this.isFormValid()){
+      // si le formulaire est valide on efface les erreurs et on passe en chargement
       this.setState({ errors: [], loading: true })
       firebase
         .auth()
+        // On crée un utilisateur grace a son mail et son mot de passe
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then(createdUser => {
-          console.log(createdUser)
+          // console.log(createdUser)
+          // On met a jour le profil utilisateur en stockant son nom et sa photo de profil
           createdUser.user.updateProfile({
             displayName: this.state.username,
             photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`
           })
           .then(()=>{
-            this.saveUser(createdUser).then(()=>{
+            // on enregistre l'utilisateur
+            this.saveUser(createdUser)
+            .then(()=>{
               console.log('Utilisateur enregistré')
             })
           })
@@ -90,6 +101,7 @@ class Register extends React.Component {
   }}
 
   saveUser = createdUser => {
+    // On definit le nom et l'avatar de l'utilisateur créee
     return this.state.usersRef.child(createdUser.user.uid).set({
       name: createdUser.user.displayName,
       avatar: createdUser.user.photoURL
@@ -97,6 +109,7 @@ class Register extends React.Component {
   }
 
   handleInputError = (errors, inputName) => {
+    // On change visuellement le champ qui contient un erreur en ajoutant la classe erreur
     return errors.some(error => error.message.toLowerCase().includes(inputName)) ? 'error' : ''
   }
 
