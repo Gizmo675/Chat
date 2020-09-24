@@ -13,7 +13,9 @@ class Channels extends React.Component {
     channelName: '',
     channelDetails: '',
     modal: false,
-    channelsRef: firebase.database().ref('channels')
+    channelsRef: firebase.database().ref('channels'),
+    firstLoad: true,
+    activeChannel: ''
   }
 
   componentDidMount() {
@@ -24,8 +26,17 @@ class Channels extends React.Component {
     let loadedChannels = []
     this.state.channelsRef.on('child_added', snap => {
       loadedChannels.push(snap.val())
-      this.setState({ channels: loadedChannels })
+      this.setState({ channels: loadedChannels}, () => this.setFirstChannel())
     })
+  }
+
+  setFirstChannel = () => {
+    const firstChannel = this.state.channels[0]
+    if(this.state.firstLoad && this.state.channels.length > 0) {
+      this.props.setCurrentChannel(firstChannel)
+      this.setActiveChannel(firstChannel)
+    }
+    this.setState({firstLoad: false})
   }
 
   handleSubmit = event => {
@@ -67,6 +78,7 @@ class Channels extends React.Component {
       name={channel.name}
       onClick={()=> this.changeChannel(channel)}
       style={{ opacity: 0.7 }}
+      active={channel.id === this.state.activeChannel}
       >
         # {channel.name}
       </Menu.Item>
@@ -74,7 +86,12 @@ class Channels extends React.Component {
   )
 
   changeChannel = channel => {
+    this.setActiveChannel(channel)
     this.props.setCurrentChannel(channel)
+  }
+
+  setActiveChannel = channel => {
+    this.setState({ activeChannel: channel.id })
   }
   
 
