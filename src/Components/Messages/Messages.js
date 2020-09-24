@@ -56,7 +56,7 @@ class Messages extends React.Component {
       <>
         <MessagesHeader />
 
-        <Segment>
+        <Segment size='large'>
           <Comment.Group className='messages' >
             {this.displayMessages(messages)}
           </Comment.Group>
