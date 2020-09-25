@@ -2,6 +2,7 @@ import React from 'react';
 import firebase from '../../firebase'
 import { Segment, Comment } from 'semantic-ui-react' 
 
+// Composant
 import MessagesHeader from './MessagesHeader'
 import MessagesForm from './MessagesForm'
 import Message from './Message'
@@ -9,7 +10,9 @@ import Message from './Message'
 class Messages extends React.Component {
 
   state = {
-    messageRef: firebase.database().ref('messages'),
+    privateChannel: this.props.isPrivateChannel,
+    privateMessagesRef: firebase.database().ref('privateMessages'),
+    messagesRef: firebase.database().ref('messages'),
     channel: this.props.currentChannel,
     user: this.props.currentUser,
     messagesLoading: true,
@@ -34,7 +37,8 @@ class Messages extends React.Component {
 
   addMessageListener = channelId => {
     let loadedMessages = []
-    this.state.messageRef.child(channelId).on('child_added', snap => {
+    const ref = this.getMessagesRef()
+    ref.child(channelId).on('child_added', snap => {
       loadedMessages.push(snap.val())
       this.setState({
         messages: loadedMessages,
@@ -42,6 +46,12 @@ class Messages extends React.Component {
       })
       this.countUniqueUsers(loadedMessages)
     })
+  }
+
+  // Je veux savoir si c'est un messages privés ou public
+  getMessagesRef = () => {
+    const { messagesRef, privateMessagesRef, privateChannel } = this.state
+    return privateChannel ? privateMessagesRef : messagesRef
   }
 
   // Je veux savoir si il y a une recherche dans les messages
@@ -113,7 +123,10 @@ class Messages extends React.Component {
   )
   
   // Je veux afficher les chaines
-  displayChannelName = channel => channel ? `#${channel.name}` : ''
+  displayChannelName = channel => {
+    return channel ? `${this.state.privateChannel ? '@' : '#'}${channel.name}` :
+    ''
+  }
 
   render() {
 
@@ -125,7 +138,8 @@ class Messages extends React.Component {
       numUniqueUsers,
       searchTerm,
       searchResults,
-      searchLoading
+      searchLoading,
+      privateChannel
     } = this.state
     
     return (
@@ -135,6 +149,7 @@ class Messages extends React.Component {
           numUniqueUsers={numUniqueUsers}
           handleSearchChange={this.handleSearchChange}
           searchLoading={searchLoading}
+          isPrivateChannel={privateChannel}
         />
 
         <Segment>
@@ -149,6 +164,8 @@ class Messages extends React.Component {
           messageRef={messageRef}
           currentChannel={channel}
           currentUser={user}
+          isPrivateChannel={privateChannel}
+          getMessagesRef={this.getMessagesRef}
         />
       </>
     )
