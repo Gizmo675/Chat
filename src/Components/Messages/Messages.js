@@ -20,6 +20,7 @@ class Messages extends React.Component {
     searchResults: []
   }
 
+  // lorsque le composant est monté, je passe l'id de la chaine a l'ecouteur
   componentDidMount() {
     const { channel, user } = this.state
     if(channel && user) {
@@ -43,43 +44,66 @@ class Messages extends React.Component {
     })
   }
 
+  // Je veux savoir si il y a une recherche dans les messages
   handleSearchChange = event => {
     this.setState({
+      // Je recupere la valeur de l'evenement
       searchTerm: event.target.value,
+      // Je passe le state de chargement a vrai
       searchLoading: true
+      // J'execute la methode
     }, ()=> this.handleSearchMessages())
   }
 
+  // Je veux afficher les messages rechercher
   handleSearchMessages = () => {
+    // Je recupere l'ensemble des messages
     const channelMessages = [...this.state.messages]
+    // Case insensitive
     const regex = new RegExp(this.state.searchTerm, 'gi')
+    // Je fais un reduce pour avoir les messages recherché
     const searchResults = channelMessages.reduce((acc, message) => {
-      if(message.content && message.content.match(regex) 
+      // si il y a un message contenant la recherche
+      if((message.content && message.content.match(regex))
         ||
+        // ou si il y a un utilisateur recherché
         message.user.name.match(regex) 
         ) {
+          // je l'envoi dans le reduce
         acc.push(message)
       }
       return acc
     }, [])
+    // je met a jour le state avec les messages recherchés
     this.setState({searchResults})
+    // Je coupe le loader une seconde aprés la recherche
     setTimeout(()=> this.setState({searchLoading:false}), 1000)
   }
 
+  // Je veux savoir combien d'utilisateur differents sont sur la chaine
   countUniqueUsers = messages => {
+    // je fais un reduce pour avoir les message de chaque utilisateur
     const uniqueUsers = messages.reduce((acc, message) => {
+      // si l'utilisateur n'est pas dans la liste
       if(!acc.includes(message.user.name)){
+        // Je l'envoi dans la liste
         acc.push(message.user.name)
       }
       return acc
     },[])
-    const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0 
+    // Gestion du S si plusieurs utilisateur
+    const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0
+    // Je compte le nombre d'utilisateur present dans le reduce
     const numUniqueUsers = `${uniqueUsers.length} utilisateur${plural?'s':''}`
+    // Je met a jour le nombre d'utilisateur sur la chaine
     this.setState({numUniqueUsers})
   }
-
+  
+  // Je veux afficher chaque messages
   displayMessages = messages => (
+    // Si il y a des messages, je boucle dessus
     messages.length > 0 && messages.map(message => (
+      // J'affiche le message avec une clé, le contenu du message et son utilisateur
       <Message 
         key={message.timestamp}
         message={message}
@@ -87,7 +111,8 @@ class Messages extends React.Component {
       />
     ))
   )
-
+  
+  // Je veux afficher les chaines
   displayChannelName = channel => channel ? `#${channel.name}` : ''
 
   render() {
