@@ -5,7 +5,12 @@ class MessagesHeader extends React.Component {
   state = {  }
   render() {
 
-    const {channelName, numUniqueUsers, handleSearchChange} = this.props
+    const {
+      channelName,
+      numUniqueUsers,
+      handleSearchChange,
+      searchLoading
+    } = this.props
 
     return ( 
       <Segment clearing>
@@ -23,6 +28,7 @@ class MessagesHeader extends React.Component {
         {/* Channel search input */}
         <Header floated='right'>
           <Input
+          loading={searchLoading}
             onChange={handleSearchChange}
             size='mini'
             icon='search'
