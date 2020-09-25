@@ -5,7 +5,7 @@ class MessagesHeader extends React.Component {
   state = {  }
   render() {
 
-    const {channelName} = this.props
+    const {channelName, numUniqueUsers, handleSearchChange} = this.props
 
     return ( 
       <Segment clearing>
@@ -16,13 +16,14 @@ class MessagesHeader extends React.Component {
             <Icon name='star outline' color='black' />
           </span>
           <Header.Subheader>
-            2 Users
+            {numUniqueUsers}
           </Header.Subheader>
         </Header>
 
         {/* Channel search input */}
         <Header floated='right'>
           <Input
+            onChange={handleSearchChange}
             size='mini'
             icon='search'
             name='searchTerm'
