@@ -114,7 +114,7 @@ class Channels extends React.Component {
 
     return ( 
       <>
-      <Menu.Menu style={{ paddingBottom: '2em' }} >
+      <Menu.Menu className='menu' >
         <Menu.Item>
           <span>
             <Icon name="exchange" /> CHAINES
