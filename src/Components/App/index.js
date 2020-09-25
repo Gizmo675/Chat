@@ -17,11 +17,11 @@ const App = ({ currentUser, currentChannel }) => (
       key={currentUser && currentUser.uid}
       currentUser={currentUser}
     />
-    <Grid.Column style={{marginLeft: 320}}>
+    <Grid.Column style={{marginLeft: 320}} width={8} >
       <Messages
         currentChannel={currentChannel}
         key={currentChannel && currentChannel.id}
-        currentUser={currentUser}
+        currentUser={currentUser}s
       />
     </Grid.Column>
     <Grid.Column width={4} >

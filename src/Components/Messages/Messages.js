@@ -48,15 +48,19 @@ class Messages extends React.Component {
     ))
   )
 
+  displayChannelName = channel => channel ? `#${channel.name}` : ''
+
   render() {
 
     const { messageRef, channel, user, messages } = this.state
     
     return (
       <>
-        <MessagesHeader />
+        <MessagesHeader 
+          channelName={this.displayChannelName(channel)}
+        />
 
-        <Segment size='large'>
+        <Segment>
           <Comment.Group className='messages' >
             {this.displayMessages(messages)}
           </Comment.Group>
