@@ -123,14 +123,14 @@ class ColorPanel extends React.Component {
               <SliderPicker color={secondary} onChange={this.handleChangeSecondary} />
             </Segment>
           </Modal.Content>
-          <Modal.Actions>
-            <Button color='green' inverted  onClick={this.handleSavedColors} >
-              <Icon name='checkmark'>Sauvegarder votre couleur</Icon>
-            </Button>
-            <Button color='red' inverted onClick={this.closeModal} >
-              <Icon name='remove'>Annuler</Icon>
-            </Button>
-          </Modal.Actions>
+            <Modal.Actions>
+              <Button color='green' inverted onClick={this.handleSavedColors}>
+                <Icon name='checkmark' /> Sauvegarder
+              </Button>
+              <Button color='red' inverted onClick={this.closeModal} >
+                <Icon name='remove' /> Annuler
+              </Button>
+            </Modal.Actions>
         </Modal>
       </Sidebar>
     )

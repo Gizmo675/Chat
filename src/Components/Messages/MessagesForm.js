@@ -45,7 +45,8 @@ class MessagesForm extends React.Component {
      return message
    }
 
-   sendMessage = () => {
+   sendMessage = event => {
+     event.preventDefault()
     const { getMessagesRef } = this.props
     const { message, channel } = this.state
 
@@ -147,46 +148,49 @@ class MessagesForm extends React.Component {
 
     return ( 
       <Segment className='message__form' >
-        <Input
-          fluid
-          name='message'
-          onChange={this.handleChange}
-          value={message}
-          style={{ marginBottom: '0.7em' }}
-          label={<Button icon={'add'} />}
-          labelPosition='left'
-          className={
-            errors.some(error => error.message.includes('message')) ? 'error' : ''
-          }
-          placeholder='Entrer votre message'
-      />
-      <Button.Group icon widths='2' >
-        <Button
-          onClick={this.sendMessage}
-          disabled={loading}
-          color='blue'
-          content='repondre'
-          labelPosition='left'
-          icon='edit'
+        <form onSubmit={this.sendMessage}>
+          <Input
+            fluid
+            name='message'
+            onChange={this.handleChange}
+            value={message}
+            style={{ marginBottom: '0.7em' }}
+            label={<Button icon={'add'} />}
+            labelPosition='left'
+            className={
+              errors.some(error => error.message.includes('message')) ? 'error' : ''
+            }
+            placeholder='Entrer votre message'
         />
-        <Button
-          color='teal'
-          disabled={uploadState === 'uploading'}
-          onClick={this.openModal}
-          content='Ajouter un media'
-          labelPosition='right'
-          icon='cloud upload'
-        />
-      </Button.Group>
-        <FileModal
-          modal={modal}
-          closeModal={this.closeModal}
-          uploadFile={this.uploadFile}
-        />
-        <ProgressBar 
-          uploadState={uploadState}
-          percentUploaded={percentUploaded}
-        />
+        <Button.Group icon widths='2' >
+          <Button
+            onClick={this.sendMessage}
+            disabled={loading}
+            color='blue'
+            content='repondre'
+            labelPosition='left'
+            icon='edit'
+          />
+          <Button
+            color='teal'
+            disabled={uploadState === 'uploading'}
+            onClick={this.openModal}
+            content='Ajouter un media'
+            labelPosition='right'
+            icon='cloud upload'
+          />
+        </Button.Group>
+          <FileModal
+            modal={modal}
+            closeModal={this.closeModal}
+            uploadFile={this.uploadFile}
+          />
+          <ProgressBar 
+            uploadState={uploadState}
+            percentUploaded={percentUploaded}
+          />
+
+        </form>
       </Segment>
      );
   }
