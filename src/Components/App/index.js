@@ -28,7 +28,7 @@ const App = ({
       currentUser={currentUser}
       primaryColor={primaryColor}
     />
-    <Grid.Column style={{marginLeft: 320}} width={8} >
+    <Grid.Column style={{marginLeft: 320}} >
       <Messages
         currentChannel={currentChannel}
         key={currentChannel && currentChannel.id}

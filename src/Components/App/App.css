@@ -1,9 +1,12 @@
 html,
 body,
 .app {
-  height: 100%;
+  height: 100vh;
   background: #eee;
-  padding: 1em;
+}
+
+.column {
+  margin: 1em 1em 0 0 ;
 }
 
 .messages {
