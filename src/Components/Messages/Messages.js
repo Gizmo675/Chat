@@ -91,7 +91,6 @@ class Messages extends React.Component {
           }
         }
       })
-      // console.log('ajouté des favoris')
     } else {
       this.state.usersRef
       .child(`${this.state.user.uid}/starred`)
@@ -101,7 +100,6 @@ class Messages extends React.Component {
           console.error(err)
         }
       })
-      // console.log('retiré des favoris')
     }
   }
 
