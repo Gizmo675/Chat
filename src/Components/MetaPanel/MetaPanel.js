@@ -4,7 +4,8 @@ import { Segment,Accordion, Header, Icon } from 'semantic-ui-react'
 class MetaPanel extends React.Component {
 
   state = {
-    activeIndex: 0
+    activeIndex: 0,
+    privateChannel: this.props.isPrivateChannel
   }
 
   setActiveIndex = (event, titleProps) => {
@@ -16,7 +17,9 @@ class MetaPanel extends React.Component {
 
   render() {
 
-    const {activeIndex} = this.state
+    const {activeIndex, privateChannel} = this.state
+
+    if(privateChannel) return null
 
     return (
 
