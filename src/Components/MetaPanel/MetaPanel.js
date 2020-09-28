@@ -1,11 +1,12 @@
 import React from 'react';
-import { Segment,Accordion, Header, Icon } from 'semantic-ui-react'
+import { Segment,Accordion, Header, Icon, Image } from 'semantic-ui-react'
 
 class MetaPanel extends React.Component {
 
   state = {
     activeIndex: 0,
-    privateChannel: this.props.isPrivateChannel
+    privateChannel: this.props.isPrivateChannel,
+    channel: this.props.currentChannel
   }
 
   setActiveIndex = (event, titleProps) => {
@@ -17,15 +18,15 @@ class MetaPanel extends React.Component {
 
   render() {
 
-    const {activeIndex, privateChannel} = this.state
+    const {activeIndex, privateChannel, channel} = this.state
 
     if(privateChannel) return null
 
     return (
 
-      <Segment>
+      <Segment loading={!channel} >
         <Header as='h3' attached='top' >
-          A propos # Chaines
+          A propos # {channel && channel.name}
         </Header>
         <Accordion styled attached='true'>
           {/* A propos de la Chaines */}
@@ -39,7 +40,7 @@ class MetaPanel extends React.Component {
             Details de la chaine
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 0}>
-            details
+            {channel && channel.details}
           </Accordion.Content>
           {/* A propos des utilisateurs */}
           <Accordion.Title
@@ -65,7 +66,10 @@ class MetaPanel extends React.Component {
             Crée par
           </Accordion.Title>
           <Accordion.Content active={activeIndex === 2}>
-            Createur
+            <Header as='h3' >
+              <Image circular src={channel && channel.createdBy.avatar} />
+              {channel && channel.createdBy.name}
+            </Header>
           </Accordion.Content>
         </Accordion>
       </Segment>
