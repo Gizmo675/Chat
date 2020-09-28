@@ -11,7 +11,7 @@ class SidePanel extends React.Component {
 
   render() {
 
-    const { currentUser } = this.props
+    const { currentUser, primaryColor } = this.props
 
     return (
       <Menu
@@ -19,9 +19,9 @@ class SidePanel extends React.Component {
         inverted
         fixed='left'
         vertical
-        style={{ background: '#00416A', fontSize:'1.2rem' }}
+        style={{ background: primaryColor, fontSize:'1.2rem' }}
       >
-        <UserPanel currentUser={currentUser} />
+        <UserPanel currentUser={currentUser} primaryColor={primaryColor} />
         <Starred currentUser={currentUser} />
         <Channels currentUser={currentUser} />
         <DirectMessages currentUser={currentUser} />
