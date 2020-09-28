@@ -83,7 +83,7 @@ class Messages extends React.Component {
       .child(`${this.state.user.uid}/starred`)
       .update({
         [this.state.channel.id]: {
-          name: this.state.channel,
+          name: this.state.channel.name,
           details: this.state.channel.details,
           createdBy: {
             name: this.state.channel.createdBy.name,
@@ -91,15 +91,17 @@ class Messages extends React.Component {
           }
         }
       })
+      // console.log('ajouté des favoris')
     } else {
       this.state.usersRef
-      .child(`${this.state.user}`)
+      .child(`${this.state.user.uid}/starred`)
       .child(this.state.channel.id)
       .remove(err => {
         if(err !== null) {
           console.error(err)
         }
       })
+      // console.log('retiré des favoris')
     }
   }
 
