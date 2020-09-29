@@ -16,8 +16,9 @@ class MessagesForm extends React.Component {
     modal: false,
     uploadState: '',
     uploadTask: null,
+    percentUploaded: 0,
     storageRef: firebase.storage().ref(),
-    percentUploaded: 0
+    typingRef: firebase.database().ref('typing')
    }
 
    openModal = () => this.setState({ modal: true })
@@ -48,7 +49,7 @@ class MessagesForm extends React.Component {
    sendMessage = event => {
      event.preventDefault()
     const { getMessagesRef } = this.props
-    const { message, channel } = this.state
+    const { message, channel, typingRef, user } = this.state
 
      if(message) {
        // Send the message
@@ -63,6 +64,10 @@ class MessagesForm extends React.Component {
            message: '',
            errors: []
          })
+         typingRef
+         .child(channel.id)
+         .child(user.uid)
+         .remove()
        })
        .catch(err => {
          console.error(err)
@@ -142,6 +147,21 @@ class MessagesForm extends React.Component {
       })
   }
 
+  handleKeyDown = () => {
+    const {message, typingRef, channel, user} = this.state
+    if(message) {
+      typingRef
+      .child(channel.id)
+      .child(user.uid)
+      .set(user.displayName)
+    } else {
+      typingRef
+      .child(channel.id)
+      .child(user.uid)
+      .remove()
+    }
+  }
+
   render() { 
 
     const {errors, message, loading, modal, uploadState, percentUploaded} = this.state
@@ -153,6 +173,7 @@ class MessagesForm extends React.Component {
             fluid
             name='message'
             onChange={this.handleChange}
+            onKeyDown={this.handleKeyDown}
             value={message}
             style={{ marginBottom: '0.7em' }}
             label={<Button icon={'add'} />}
