@@ -2,12 +2,16 @@ import React from 'react';
 import firebase from '../../firebase'
 import { v4 as uuidv4 } from 'uuid';
 import { Segment, Button, Input } from 'semantic-ui-react'
+import { Picker, emojiIndex } from 'emoji-mart'
+import 'emoji-mart/css/emoji-mart.css'
 
 import FileModal from './FileModal'
 import ProgressBar from './ProgressBar';
 
 class MessagesForm extends React.Component {
   state = { 
+    storageRef: firebase.storage().ref(),
+    typingRef: firebase.database().ref('typing'),
     message: '',
     user: this.props.currentUser,
     channel: this.props.currentChannel,
@@ -17,8 +21,7 @@ class MessagesForm extends React.Component {
     uploadState: '',
     uploadTask: null,
     percentUploaded: 0,
-    storageRef: firebase.storage().ref(),
-    typingRef: firebase.database().ref('typing')
+    emojiPicker: false
    }
 
    openModal = () => this.setState({ modal: true })
@@ -59,15 +62,15 @@ class MessagesForm extends React.Component {
        .push()
        .set(this.createMessage())
        .then(()=> {
-         this.setState({
-           loading: false,
-           message: '',
-           errors: []
+          this.setState({
+            loading: false,
+            message: '',
+            errors: []
          })
          typingRef
-         .child(channel.id)
-         .child(user.uid)
-         .remove()
+          .child(channel.id)
+          .child(user.uid)
+          .remove()
        })
        .catch(err => {
          console.error(err)
@@ -162,13 +165,54 @@ class MessagesForm extends React.Component {
     }
   }
 
+  handleTogglePicker = () => {
+    this.setState({ emojiPicker: !this.state.emojiPicker })
+  }
+  handleAddEmoji = emoji => {
+    const oldMessage = this.state.message
+    const newMessage = this.colonToUnicode(` ${oldMessage} ${emoji.colons} `)
+    this.setState({ message: newMessage, emojiPicker: false })
+  }
+
+  colonToUnicode = message => {
+    return message.replace(/:[A-Za-z0-9_+-]+:/g, x => {
+      x = x.replace(/:/g,'')
+      let emoji = emojiIndex.emojis[x]
+      if(typeof emoji !== 'undefined'){
+        let unicode = emoji.native
+        if(typeof unicode !== 'undefined'){
+          return unicode
+        }
+      }
+      x = ':' + x + ':'
+      return x
+    })
+  }
+
   render() { 
 
-    const {errors, message, loading, modal, uploadState, percentUploaded} = this.state
+    const {
+      errors, 
+      message, 
+      loading, 
+      modal, 
+      uploadState, 
+      percentUploaded, 
+      emojiPicker
+    } = this.state
 
     return ( 
       <Segment className='message__form' >
         <form onSubmit={this.sendMessage}>
+          {emojiPicker && (
+            <Picker 
+              set='apple'
+              className='emojipicker'
+              title='choisissez un emoji'
+              emoji='point_up'
+              onSelect={this.handleAddEmoji}
+            />
+          )}
           <Input
             fluid
             name='message'
@@ -176,7 +220,7 @@ class MessagesForm extends React.Component {
             onKeyDown={this.handleKeyDown}
             value={message}
             style={{ marginBottom: '0.7em' }}
-            label={<Button icon={'add'} />}
+            label={<Button icon={'add'} onClick={this.handleTogglePicker} />}
             labelPosition='left'
             className={
               errors.some(error => error.message.includes('message')) ? 'error' : ''
