@@ -27,6 +27,21 @@ class ColorPanel extends React.Component {
     userColors: []
   }
 
+  componentDidMount() {
+    if(this.state.user) {
+      this.addListener(this.state.user.uid)
+    }
+  }
+
+  componentWillUnmount(){
+    this.removeListener()
+  }
+
+  removeListener = () => {
+    this.state.usersRef
+    .child(`${this.state.user.uid}/colors`).off()
+  }
+
   handleChangePrimary = color => this.setState({primary: color.hex})
   handleChangeSecondary = color => this.setState({secondary: color.hex})
 
@@ -54,11 +69,6 @@ class ColorPanel extends React.Component {
   openModal = () => this.setState({modal: true})
   closeModal = () => this.setState({modal: false})
 
-  componentDidMount() {
-    if(this.state.user) {
-      this.addListener(this.state.user.uid)
-    }
-  }
 
   addListener = userId => {
     let userColors = []

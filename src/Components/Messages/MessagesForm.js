@@ -24,12 +24,19 @@ class MessagesForm extends React.Component {
     emojiPicker: false
    }
 
-   openModal = () => this.setState({ modal: true })
-   closeModal = () => this.setState({ modal: false })
-
-   handleChange = event => {
-     this.setState({ [event.target.name]: event.target.value })
+   componentWillUnmount() {
+     if(this.state.uploadTask !== null) {
+       this.state.uploadTask.cancel()
+       this.setState({uploadTask: null})
+     }
    }
+
+  openModal = () => this.setState({ modal: true })
+  closeModal = () => this.setState({ modal: false })
+
+  handleChange = event => {
+    this.setState({ [event.target.name]: event.target.value })
+  }
 
    createMessage = (fileURL=null) => {
      const message = {
@@ -151,6 +158,7 @@ class MessagesForm extends React.Component {
   }
 
   handleKeyDown = () => {
+
     const {message, typingRef, channel, user} = this.state
     if(message) {
       typingRef
@@ -240,7 +248,7 @@ class MessagesForm extends React.Component {
             onClick={this.sendMessage}
             disabled={loading}
             color='blue'
-            content='Répondre'
+            content='Répondre (ctrl + enter)'
             labelPosition='left'
             icon='edit'
           />
