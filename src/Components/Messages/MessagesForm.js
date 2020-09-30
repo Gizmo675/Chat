@@ -172,6 +172,7 @@ class MessagesForm extends React.Component {
     const oldMessage = this.state.message
     const newMessage = this.colonToUnicode(` ${oldMessage} ${emoji.colons} `)
     this.setState({ message: newMessage, emojiPicker: false })
+    setTimeout(()=> this.messageInputRef.focus(), 0)
   }
 
   colonToUnicode = message => {
@@ -203,7 +204,7 @@ class MessagesForm extends React.Component {
 
     return ( 
       <Segment className='message__form' >
-        <form onSubmit={this.sendMessage}>
+        {/* <form onSubmit={this.sendMessage}> */}
           {emojiPicker && (
             <Picker 
               set='apple'
@@ -219,8 +220,15 @@ class MessagesForm extends React.Component {
             onChange={this.handleChange}
             onKeyDown={this.handleKeyDown}
             value={message}
+            ref={node => (this.messageInputRef = node)}
             style={{ marginBottom: '0.7em' }}
-            label={<Button icon={'add'} onClick={this.handleTogglePicker} />}
+            label={
+            <Button
+             icon={emojiPicker ? 'close' : 'add'}
+             content={emojiPicker ? 'Fermer' : null}
+             onClick={this.handleTogglePicker} 
+            />
+          }
             labelPosition='left'
             className={
               errors.some(error => error.message.includes('message')) ? 'error' : ''
@@ -232,7 +240,7 @@ class MessagesForm extends React.Component {
             onClick={this.sendMessage}
             disabled={loading}
             color='blue'
-            content='repondre'
+            content='Répondre'
             labelPosition='left'
             icon='edit'
           />
@@ -255,7 +263,7 @@ class MessagesForm extends React.Component {
             percentUploaded={percentUploaded}
           />
 
-        </form>
+        {/* </form> */}
       </Segment>
      );
   }
